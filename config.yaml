@@ -1,0 +1,71 @@
+loggin:
+  version: 1
+  disable_existing_loggers: False
+  formatters:
+    simple:
+      format: "%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s"
+      datefmt: "%Y/%m/%d %H:%M:%S"
+    detailed:
+      format: '%(asctime)s %(levelname)s %(process)d %(threadName)s %(filename)s %(lineno)d %(funcName)s %(message)s'
+      datefmt: '%Y-%m-%d %H:%M:%S'
+    syslog:
+      format: "%(levelname)s <PID %(process)d:%(processName)s T:%(threadName)s> %(funcName)s %(message)s"
+      #format: "%(levelname)s <PID %(process)d:%(processName)s T:%(threadName)s> %(name).%(funcName)s: %(message)s"
+    syslog_det:
+      format: "%(levelname)s <PID %(process)d:%(processName)s T:%(threadName)s> %(filename)s %(lineno)d %(funcName)s %(message)s"
+    syslog_estat:
+      format: "%(message)s"
+
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: DEBUG
+      formatter: simple
+      stream: ext://sys.stdout
+
+    access_file_handler:
+      class: logging.handlers.TimedRotatingFileHandler
+      level: DEBUG
+      formatter: detailed
+      filename: log/access.log
+      backupCount: 30
+      #maxBytes: 10485760 #10M
+      encoding: utf8
+      when: midnight
+      interval: 1
+      delay: True
+
+    info_file_handler:
+      class: logging.handlers.RotatingFileHandler
+      level: INFO
+      formatter: simple
+      filename: log/info.log
+      maxBytes: 10485760 # 10MB
+      backupCount: 20
+      encoding: utf8
+
+    error_file_handler:
+      class: logging.handlers.RotatingFileHandler
+      level: ERROR
+      formatter: simple
+      filename: log/errors.log
+      maxBytes: 10485760 # 10MB
+      backupCount: 20
+      encoding: utf8
+
+    sys: #syslog
+      class: logging.handlers.SysLogHandler
+      #formatter: syslog_det
+      formatter: syslog
+      address: [localhost, 514]
+      facility: local5
+
+  loggers:
+    my_module:
+      level: ERROR
+      handlers: [console]
+      propagate: no
+  
+  root:
+    level: INFO
+    handlers: [console, sys, info_file_handler, access_file_handler, error_file_handler]
