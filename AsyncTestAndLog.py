@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+'''
+Created on 20180326
+Update on 20180326
+@author: Eduardo Pagotto
+'''
+
+#pylint: disable=C0301
+#pylint: disable=C0103
+#pylint: disable=W0703
 
 import time
 import asyncio
@@ -8,7 +18,7 @@ import yaml
 
 def execute_teste(nome):
     '''
-    teste lento
+    teste de thread lenta
     '''
     log = logging.getLogger(__name__)
     for valor in range(5):
@@ -18,6 +28,9 @@ def execute_teste(nome):
     return nome 
 
 async def main(log):
+    '''
+    Execula loop Async
+    '''
     log.info("Main Start")  
     loop = asyncio.get_event_loop()
     with concurrent.futures.ThreadPoolExecutor(max_workers=20, thread_name_prefix='paralelo') as executor:
@@ -25,14 +38,13 @@ async def main(log):
         blocos_tarefa = [loop.run_in_executor(executor, execute_teste, 'thread-' + str(val)) for val in range(50)]
         tam = len(blocos_tarefa)
         while tam > 0:
-            done, pending = await asyncio.wait(blocos_tarefa)# = await asyncio.wait(blocos)
-
+            done, pending = await asyncio.wait(blocos_tarefa)
             for encerrado in done:
                 log.info('REPOSTA VAL: {0}'.format(encerrado.result()))
                 blocos_tarefa.remove(encerrado)
 
-            log.info('Tamanho bloco:' + str(len(blocos_tarefa)))
             tam = len(blocos_tarefa)
+            log.info('Tamanho bloco:' + str(tam))
 
     log.info("Main End")
 
