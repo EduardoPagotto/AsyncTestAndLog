@@ -31,6 +31,7 @@ async def main(log):
     '''
     Execula loop Async
     '''
+    # TODO: #1
     log.info("Main Start")  
     loop = asyncio.get_event_loop()
     with concurrent.futures.ThreadPoolExecutor(max_workers=20, thread_name_prefix='paralelo') as executor:
