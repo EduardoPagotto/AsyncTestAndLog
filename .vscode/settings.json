@@ -1,5 +1,6 @@
 // Place your settings in this file to overwrite default and user settings.
 {
     "python.pythonPath": "python3",
-    "editor.minimap.enabled": false
+    "editor.minimap.enabled": false,
+    "todo-tree.flat": true
 }
